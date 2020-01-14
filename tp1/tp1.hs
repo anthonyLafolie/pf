@@ -1,4 +1,6 @@
 --Q3
+
+sommeDeXaY :: Int -> Int -> Int
 sommeDeXaY x y = sum[x..y]
 
 --Q4
@@ -7,19 +9,23 @@ sommeDeXaY x y = sum[x..y]
 somme :: [Int] -> Int
 somme [] = 0
 somme (x:xs) = x + (somme xs)
-
-
 --Q5
+
+last' :: [a] -> a
 last' xs = head (reverse xs)
 
-init'[x] = []
+init' :: [a] -> [a]
+init'[_] = []
 init' xs = take(length(xs)-1) xs
 
+init'' :: [a] -> [a]
 init'' xs = reverse(drop 1(reverse xs))
 
 --Q6
 
 -- Commande concat
+
+concat' :: [[a]] -> [a]
 {-Cas de base-}
 concat' [] = []
 {-Quand le premier tableau est vide, on lance l'appelle récursif avec le second tableau-}
@@ -29,21 +35,23 @@ concat' ((x:xs):ys) = x:concat'(xs:ys)
 
 
 -- Commande !!
-
-index' 0 (x:xs) = x
+index' :: Int -> [a] -> a
+index' _ [] = error "Erreur"
+index' 0 (x:_) = x
 {-Attention, les parenthèses du n-1 ne sont pas optionnels !-}
-index' n (x:xs) = index' (n-1) xs
+index' n (_:xs) = index' (n-1) xs
 
 -- Commande ++
-concatv2 [] [] = []
-concatv2 [] (x:xs) = x:concatv2 [] xs
-concatv2 (x:xs) (y:ys) = x:concatv2 xs (y:ys)
+plusplus :: [a] -> [a] -> [a]
+plusplus [] [] = []
+plusplus [] (x:xs) = x:plusplus [] xs
+plusplus (x:xs) ys = x:plusplus xs ys
 
 
 -- Commande map
-
+map' :: (a -> b) -> [a] -> [b]
 map' _ [] = []
-map' f (x:xs) = f x:map' f xs
+map' f1 (x:xs) = f1 x:map' f1 xs
 {-f est une fonction que l'on applique à notre tête de liste-}
 
 --Q7
@@ -55,8 +63,9 @@ map' f (x:xs) = f x:map' f xs
 longueur [] = 0
 longueur (x:xs) = sum [1 | x<-xs]
 -}
+longueur :: [a] -> Int
 longueur [] = 0
-longueur l = sum(map(const 1) l)
+longueur l = somme(map(const 1) l)
 
 
 --Q9
@@ -64,12 +73,14 @@ longueur l = sum(map(const 1) l)
 f :: a -> a
 f a = a
 fonct :: (a -> a) -> a -> Int -> [a]
-fonct f x n = [y | y <- take n(iterate(f) x)]
+fonct f1 x n = [y | y <- take n(iterate(f1) x)]
 
-fonct' f x 1 = [x]
-fonct' f x n = [x] ++ map f (fonct' f x (n-1))
+fonct' :: (a -> a) -> a -> Int -> [a]
+{- On pose notre cas de base et sinon on concatene la liste [x] avec la liste n*f[x]-}
+fonct' _ x 1 = [x]
+fonct' f1 x n = [x] ++ map f1 (fonct' f1 x (n-1))
 
 --Q10
-
+somme0aN :: Int -> [Int]
 somme0aN 0 = [0]
-somme0aN n = fonct' (+1) 0 (n+1)
+somme0aN n = fonct' (+1) 0 (n+1) 
