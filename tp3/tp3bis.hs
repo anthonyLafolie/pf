@@ -16,7 +16,7 @@ type Config = (EtatTortue -- État initial de la tortue
 type EtatDessin = ([EtatTortue], [Path])
 
 motSuivant :: Regles -> Mot -> Mot
-motSuivant r [x] = r x
+motSuivant r [] = []
 motSuivant r (x:xs) = (r x) ++ motSuivant r xs
 
 motSuivant' :: Regles -> Mot -> Mot
@@ -32,7 +32,7 @@ vanKoch 'F' = "F-F++F-F"
 vanKoch _ = error "mauvais symbole"
 
 lsysteme :: Axiome -> Regles -> LSysteme
-lsysteme a r = iterate (motSuivant r) a
+lsysteme a r = iterate (motSuivant' r) a
 
 
 -- Q4
@@ -75,16 +75,16 @@ filtreSymbolesTortue conf mot = myIntersect mot (symbolesTortue conf)
 -- Q8
 interpreteSymbole :: Config -> EtatDessin -> Symbole -> EtatDessin
 interpreteSymbole conf etat symb
-  | symb == '+' = ([tourneAGauche conf (head(fst(etat)))], snd(etat))
-  | symb == '-' = ([tourneADroite conf (head(fst(etat)))], snd(etat))
-  | otherwise = let newEtat = avance conf (head(fst(etat))) in ([newEtat], snd(etat) ++ [[fst(newEtat)]])
+  | symb == '+' = ([tourneAGauche conf (head(fst etat))], snd(etat))
+  | symb == '-' = ([tourneADroite conf (head(fst etat))], snd(etat))
+  | otherwise = let newEtat = avance conf (head(fst(etat))) in ([newEtat], [[fst(newEtat)]] ++ snd(etat))
 
 -- Q9
 {-  -}
 
 -- Q10
-interpreteMot :: Config -> Mot -> [Path]
-interpreteMot conf mot = snd( foldl (interpreteSymbole conf) initialEtatDessin motFiltre)
+interpreteMot :: Config -> Mot -> Picture
+interpreteMot conf mot = line(head(snd( foldl (interpreteSymbole conf) initialEtatDessin motFiltre)))
   where initialPoint = fst(etatInitial conf)
         initialEtatDessin = ([etatInitial conf], [[initialPoint]])
         motFiltre = filtreSymbolesTortue conf mot
@@ -92,9 +92,7 @@ interpreteMot conf mot = snd( foldl (interpreteSymbole conf) initialEtatDessin m
 
 dessin = interpreteMot (((-150,0),0),100,1,pi/3,"F+-") "F+F--F+F"
 
-{-
-
-main = animate (InWindow "L-système" (1000, 1000) (0, 0)) white dragonAnime
+main = animate (InWindow "L-système" (1000, 1000) (0, 0)) white hilbertAnime
 
 
 lsystemeAnime :: LSysteme -> Config -> Float -> Picture
@@ -137,4 +135,3 @@ hilbertAnime = lsystemeAnime hilbert (((-400, -400), 0), 800, 1/2, pi/2, "F+-")
 
 dragonAnime :: Float -> Picture
 dragonAnime = lsystemeAnime dragon (((0, 0), 0), 50, 1, pi/2, "F+-")
--}
