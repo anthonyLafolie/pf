@@ -74,10 +74,10 @@ filtreSymbolesTortue conf mot = myIntersect mot (symbolesTortue conf)
 
 -- Q8
 interpreteSymbole :: Config -> EtatDessin -> Symbole -> EtatDessin
-interpreteSymbole conf etat symb
-  | symb == '+' = ([tourneAGauche conf (head(fst etat))], snd(etat))
-  | symb == '-' = ([tourneADroite conf (head(fst etat))], snd(etat))
-  | otherwise = let newEtat = avance conf (head(fst(etat))) in ([newEtat], [[fst(newEtat)]] ++ snd(etat))
+interpreteSymbole c (et:ets,p:ps) s
+                   | s == 'F' = let nE = (avance c et) in (nE:et:ets, [fst(nE)] ++ p)
+                   | s == '+' = (tourneAGauche c et:et:ets ,p)
+                   | s == '-' = (tourneADroite c et:et:ets,p)
 
 -- Q9
 {-  -}
@@ -85,8 +85,12 @@ interpreteSymbole conf etat symb
 -- Q10
 interpreteMot :: Config -> Mot -> Picture
 interpreteMot conf mot = line(head(snd( foldl (interpreteSymbole conf) initialEtatDessin motFiltre)))
-  where initialPoint = fst(etatInitial conf)
-        initialEtatDessin = ([etatInitial conf], [[initialPoint]])
+  where initialEtatDessin = ([etatInitial conf], [[fst(etatInitial conf)]])
+        motFiltre = filtreSymbolesTortue conf mot
+
+interpreteMot2 :: Config -> Mot -> [Path]
+interpreteMot2 conf mot = snd( foldl (interpreteSymbole conf) initialEtatDessin motFiltre)
+  where initialEtatDessin = ([etatInitial conf], [[fst(etatInitial conf)]])
         motFiltre = filtreSymbolesTortue conf mot
 
 
